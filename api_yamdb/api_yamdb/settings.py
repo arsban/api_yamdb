@@ -86,6 +86,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Set default user model
+AUTH_USER_MODEL = 'Yamdb.User'
+
 
 # Internationalization
 
