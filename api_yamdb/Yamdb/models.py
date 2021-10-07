@@ -30,12 +30,18 @@ class Review(models.Model):
     text = models.TextField(verbose_name='Текст отзыва')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
-    score = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
-                                             MaxValueValidator(10)])
+    score = models.IntegerField(null=True, blank=True, validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ])
 
     class Meta:
         ordering = ('-pub_date', 'score')
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
+    def __str__(self): 
+       return self.text 
 
 class Comment(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE,
@@ -46,3 +52,8 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self): 
+       return self.text 
