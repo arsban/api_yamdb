@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -27,13 +28,11 @@ class User(AbstractUser):
         ),
         validators=[UnicodeUsernameValidator()],
         error_messages={
-            'unique': 'Пользователь с таким никнетмом уже существует.',
+            'unique': 'Пользователь с таким никнеимом уже существует.',
         },
         blank=True,
         null=True,
     )
-    first_name = models.CharField('Имя', max_length=30, blank=True)
-    last_name = models.CharField('Фамилия', max_length=150, blank=True)
     bio = models.TextField(
         'О себе',
         blank=True,
@@ -45,26 +44,33 @@ class User(AbstractUser):
         choices=CHOICES,
         default=CHOICES[0],
     )
-    password = models.CharField('Пароль', max_length=25)
+    confirmation_code = models.CharField(
+        'Код подтверждения',
+        max_length=100,
+        null=True,
+        default=uuid.uuid4
+    )
 
+    @property
+    def is_user(self):
+        return self.role == self.USER or self.is_admin or self.is_moderator
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR or self.is_admin
+    
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_staff is True
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     class Meta:
+        ordering = ['id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return f'{self.email}'
-    
-
-    @property
-    def is_user(self):
-        return self.role == Role.USER or self.is_admin or self.is_moderator
-
-    @property
-    def is_moderator(self):
-        return self.role == Role.MODERATOR or self.is_admin
-    
-
-    @property
-    def is_admin(self):
-        return self.role == Role.ADMIN or self.is_staff is True
