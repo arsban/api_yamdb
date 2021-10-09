@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as CustomUserAdmin
 
-from .models import User, Category, Genre, Title, TitleGenre, Review, Comment
+from .models import Category, Comment, Genre, Review, Title, TitleGenre, User
 
 
-@admin.register(User)
+#@admin.register(User)
 class UserAdmin(CustomUserAdmin):
     fieldsets = tuple(
         (fieldset[0], {
@@ -19,7 +19,10 @@ class UserAdmin(CustomUserAdmin):
     list_display = ['email', 'username', 'role', 'is_active']
     empty_value_display = '-пусто-'
 
-    
+
+admin.site.register(User, UserAdmin)
+
+
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'author', 'text', 'pub_date',)
@@ -29,7 +32,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('author', 'pub_date','text',)
+    list_display = ('author', 'pub_date', 'text',)
     search_fields = ('author',)
     list_filter = ('author',)
 

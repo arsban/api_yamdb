@@ -1,8 +1,9 @@
 import uuid
-from django.db import models
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 
 class User(AbstractUser):
@@ -14,18 +15,10 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin')
     )
-    email = models.EmailField(
-        'Email',
-        unique=True,
-        max_length=254
-    )
+    email = models.EmailField('Email', unique=True, max_length=254)
     username = models.CharField(
-        'Никнеим',
-        max_length=150,
-        unique=True,
-        help_text=(
-            'Обязательное поле, только цифры, буквы или @/./+/-/_.'
-        ),
+        'Никнеим', max_length=150, unique=True,
+        help_text=('Обязательное поле, только цифры, буквы или @/./+/-/_.'),
         validators=[UnicodeUsernameValidator()],
         error_messages={
             'unique': 'Пользователь с таким никнеимом уже существует.',
@@ -59,11 +52,12 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR or self.is_admin
+    
 
     @property
     def is_admin(self):
         return self.role == self.ADMIN or self.is_staff is True
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -157,7 +151,7 @@ class Review(models.Model):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
 
-    def __str__(self): 
+    def __str__(self):
         return self.text
 
 
@@ -173,5 +167,5 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
-    def __str__(self): 
+    def __str__(self):
         return self.text

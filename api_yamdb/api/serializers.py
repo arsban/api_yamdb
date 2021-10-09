@@ -1,6 +1,30 @@
-from Yamdb.models import Category, Genre, Title, TitleGenre
+from Yamdb.models import User, Category, Genre, Title, TitleGenre
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['email', 'username', 'bio', 'role']
+        model = User
+        extra_kwargs = {
+            'username': {'required': True},
+            'email': {'required': True}
+        }
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['email']
+        model = User
+        extra_kwargs = {
+            'email': {'required': True}
+        }
+
+
+class ConfirmationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
 
 class CategorySerializer(serializers.ModelSerializer):
