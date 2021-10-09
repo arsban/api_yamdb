@@ -22,9 +22,9 @@ class UserAdmin(CustomUserAdmin):
     
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('id','title', 'author','text','pub_date',)
-    search_fields = ('id','title','author',)
-    list_filter = ('pub_date','author')
+    list_display = ('id', 'title', 'author', 'text', 'pub_date',)
+    search_fields = ('id', 'title', 'author',)
+    list_filter = ('pub_date', 'author')
 
 
 @admin.register(Comment)

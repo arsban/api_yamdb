@@ -1,16 +1,24 @@
-from Yamdb.models import User
+from Yamdb.models import User, Category, Genre, Title
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from Yamdb.serializers import ConfirmationCodeSerializer, EmailSerializer, UserSerializer
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import viewsets, views, status
+from rest_framework import viewsets, views, status, mixins
 from rest_framework.decorators import action
 from Yamdb.permissions import IsAdmin
 from rest_framework_simplejwt.tokens import AccessToken
 
 
+class ListCreateDestroyViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -94,3 +102,21 @@ class AccessTokenView(views.APIView):
         return {
             'token': str(AccessToken.for_user(user))
         }
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+
+class GenreViewSet(ListCreateDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]

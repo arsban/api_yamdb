@@ -5,7 +5,6 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
-
 class User(AbstractUser):
     USER = 'user'
     MODERATOR = 'moderator'
@@ -60,7 +59,6 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR or self.is_admin
-    
 
     @property
     def is_admin(self):
@@ -160,7 +158,7 @@ class Review(models.Model):
         verbose_name_plural = 'Отзывы'
 
     def __str__(self): 
-       return self.text 
+        return self.text
 
 
 class Comment(models.Model):
@@ -176,4 +174,4 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self): 
-       return self.text 
+        return self.text
