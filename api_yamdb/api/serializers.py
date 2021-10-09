@@ -1,11 +1,10 @@
 from rest_framework import serializers
+from Yamdb.models import User
 
-from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['email', 'username', 'first_name', 'last_name', 
-                  'bio',  'role']
+        fields = ['email', 'username', 'bio', 'role']
         model = User
         extra_kwargs = {
             'username': {'required': True},
