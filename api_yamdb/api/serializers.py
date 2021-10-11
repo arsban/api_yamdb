@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
-from .models import User, Review, Comment
+from Yamdb.models import User, Review, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

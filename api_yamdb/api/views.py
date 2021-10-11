@@ -10,9 +10,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from Yamdb.models import User
 
-from .permissions import IsAdmin
+from .permissions import IsAdmin, IsOwnerAdminModeratorOrReadOnly
 from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
-                          UserSerializer)
+                          UserSerializer, ReviewSerializer, CommentSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
