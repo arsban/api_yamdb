@@ -1,16 +1,18 @@
 from Yamdb.models import User, Title, Comment, Review
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from Yamdb.serializers import ConfirmationCodeSerializer, EmailSerializer, UserSerializer, CommentSerializer, ReviewSerializer
+from rest_framework import status, views, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import viewsets, views, status
-from rest_framework.decorators import action
-from Yamdb.permissions import IsAdmin, IsOwnerAdminModeratorOrReadOnly
 from rest_framework_simplejwt.tokens import AccessToken
+from Yamdb.models import User
 
-
+from .permissions import IsAdmin
+from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
+                          UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -62,7 +64,7 @@ class EmailRegistrationView(views.APIView):
         serializer.save(email=email)
         user = get_object_or_404(User, email=email)
         self.mail_send(email, user)
-        return Response({f'email: {email}'}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AccessTokenView(views.APIView):
@@ -72,9 +74,9 @@ class AccessTokenView(views.APIView):
         serializer = ConfirmationCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         confirmation_code = serializer.validated_data['confirmation_code']
-        email = serializer.validated_data['email']
+        username = serializer.validated_data['username']
         try:
-            user = User.objects.get(email=email)
+            user = get_object_or_404(User, username=username)
         except User.DoesNotExist:
             return Response({
                 'email':

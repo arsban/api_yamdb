@@ -5,8 +5,7 @@ from .models import User, Review, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['email', 'username', 'first_name', 'last_name', 
-                  'bio',  'role']
+        fields = ['email', 'username', 'bio', 'role']
         model = User
         extra_kwargs = {
             'username': {'required': True},
@@ -16,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class EmailSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['email']
+        fields = ['username', 'email']
         model = User
         extra_kwargs = {
             'email': {'required': True}
@@ -42,3 +41,5 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
