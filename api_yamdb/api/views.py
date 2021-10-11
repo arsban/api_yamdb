@@ -62,7 +62,7 @@ class EmailRegistrationView(views.APIView):
         serializer.save(email=email)
         user = get_object_or_404(User, email=email)
         self.mail_send(email, user)
-        return Response({f'email: {email}'}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AccessTokenView(views.APIView):
@@ -72,9 +72,9 @@ class AccessTokenView(views.APIView):
         serializer = ConfirmationCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         confirmation_code = serializer.validated_data['confirmation_code']
-        email = serializer.validated_data['email']
+        username = serializer.validated_data['username']
         try:
-            user = User.objects.get(email=email)
+            user = get_object_or_404(User, username=username)
         except User.DoesNotExist:
             return Response({
                 'email':

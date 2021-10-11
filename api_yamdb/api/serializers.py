@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class EmailSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['email']
+        fields = ['username', 'email']
         model = User
         extra_kwargs = {
             'email': {'required': True}
@@ -22,5 +22,5 @@ class EmailSerializer(serializers.ModelSerializer):
 
 
 class ConfirmationCodeSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
