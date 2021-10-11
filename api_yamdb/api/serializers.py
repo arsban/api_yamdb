@@ -41,5 +41,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
+
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
