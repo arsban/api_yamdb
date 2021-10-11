@@ -71,8 +71,8 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Название категории')
-    slug = models.SlugField(max_length=150, unique=True,
+    name = models.CharField(max_length=256, verbose_name='Название категории')
+    slug = models.SlugField(max_length=50, unique=True,
                             verbose_name='Уникальный идентификатор категории')
 
     class Meta:
@@ -85,8 +85,8 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Жанр')
-    slug = models.SlugField(max_length=150, unique=True,
+    name = models.CharField(max_length=256, verbose_name='Жанр')
+    slug = models.SlugField(max_length=50, unique=True,
                             verbose_name='Уникальный идентификатор жанра')
 
     class Meta:
@@ -99,15 +99,15 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название')
-    year = models.PositiveSmallIntegerField()
+    name = models.CharField(max_length=256, verbose_name='Название')
+    year = models.PositiveSmallIntegerField(max_length=4)
     description = models.TextField(verbose_name='Описание произведения')
     genre = models.ManyToManyField(Genre, blank=True,
-                                   related_name='genre_titles',
+                                   related_name='genre',
                                    verbose_name='Жанр', through='TitleGenre')
     category = models.ForeignKey(Category, blank=True, null=True,
                                  on_delete=models.SET_NULL,
-                                 related_name='category_titles',
+                                 related_name='category',
                                  verbose_name='Категория')
 
     class Meta:

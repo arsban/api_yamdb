@@ -1,4 +1,7 @@
-from Yamdb.models import User, Category, Genre, Title, TitleGenre
+import re
+from unicodedata import category
+
+from yamdb.models import User, Category, Genre, Title, TitleGenre
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 import datetime as dt
@@ -38,6 +41,12 @@ class CategorySerializer(serializers.ModelSerializer):
             'slug': {'validators': []},
         }
 
+    def validate_slug(self, slug):
+        if len(slug) > 50:
+            return ValidationError("Slug должен быть не больше 50 символов")
+        if re.match(r'^[-a-zA-Z0-9_]+$', slug):
+            return ValidationError("Неверный формат Slug")
+
 
 class GenreSerializer(serializers.ModelSerializer):
 
@@ -56,26 +65,23 @@ class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(many=True, read_only=False,
+                                         queryset=Genre.objects.all(),
+                                         slug_field='slug')
+    category = serializers.SlugRelatedField(many=False, read_only=False,
+                                            queryset=Category.objects.all(),
+                                            slug_field='slug')
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
     def validate_year(self, value):
         year = dt.date.today().year
         if not (1888 < value <= year):
             raise ValidationError('Указан некорректный год!')
         return value
-
-    def create(self, validated_data):
-        genres = validated_data.pop('genre')
-        category = validated_data.pop('category')['slug']
-        if not Category.objects.filter(slug=category).exists():
-            raise ValidationError(f'Укажите одну из существующих категорий!')
-        category_object = Category.objects.filter(slug=category).get()
-        title = Title.objects.create(
-            **validated_data, category=category_object
-        )
-        for genre in genres:
-            if not Genre.objects.filter(slug=genre['slug']).exists():
-                raise ValidationError(f'Жанра "{genre}" не существует!')
-            genre_object = Genre.objects.filter(slug=genre['slug']).get()
-            TitleGenre.objects.create(genre=genre_object, title=title)
-        return Title
