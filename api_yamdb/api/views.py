@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from Yamdb.models import User, Category, Genre, Title
 
-from .permissions import IsAdmin
+from .permissions import IsAdmin, IsAdminOrReadOnly
 from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
                           UserSerializer, CategorySerializer, GenreSerializer,
                           TitleSerializer)
@@ -27,8 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
-    http_method_names = ['get', 'post',
-                         'patch', 'delete']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     search_fields = ['username']
     lookup_field = 'username'
 
@@ -109,16 +108,16 @@ class AccessTokenView(views.APIView):
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
