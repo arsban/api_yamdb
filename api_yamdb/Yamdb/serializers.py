@@ -1,6 +1,7 @@
 from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
 
-from .models import User
+from .models import User, Review, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +26,19 @@ class EmailSerializer(serializers.ModelSerializer):
 class ConfirmationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     confirmation_code = serializers.CharField(required=True)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('id', 'author', 'text', 'score', 'pub_date')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'author', 'pub_date')
