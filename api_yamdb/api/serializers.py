@@ -5,6 +5,7 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.exceptions import ValidationError
 from yamdb.models import User, Review, Comment, Category, Title, Genre
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['email', 'username', 'bio', 'role']
@@ -43,7 +44,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
-
 
 class CategorySerializer(serializers.ModelSerializer):
 
