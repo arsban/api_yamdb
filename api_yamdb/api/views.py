@@ -16,7 +16,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
                           UserSerializer, CategorySerializer, GenreSerializer,
-                          TitleSerializer, TitleWriteSerializer, ReviewSerializer, CommentSerializer)
+                          TitleSerializer, TitleWriteSerializer, ReviewSerializer,
+                          CommentSerializer)
 
 
 class ListCreateDestroyViewSet(
@@ -32,7 +33,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['get', 'post',
+                         'patch', 'delete']
     search_fields = ['username']
     lookup_field = 'username'
 
@@ -108,6 +110,7 @@ class AccessTokenView(views.APIView):
         return {
             'token': str(AccessToken.for_user(user))
         }
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
