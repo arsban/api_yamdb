@@ -1,15 +1,24 @@
-from django.urls import path  #, include
+from django.urls import path, include
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from .views import EmailRegistrationView, AccessTokenView, ReviewViewSet, CommentViewSet
-from .views import (  # GenreViewSet, CategoryViewSet, TitleViewSet,
+from .views import (GenreViewSet, CategoryViewSet, TitleViewSet,
     AccessTokenView, EmailRegistrationView)
 
+from django.urls import path, include
+
+from .views import (GenreViewSet, CategoryViewSet, TitleViewSet,
+                    AccessTokenView, EmailRegistrationView)
+
+from rest_framework.routers import SimpleRouter
+
+
+
 router_v1 = SimpleRouter()
-#router_v1.register('categories', CategoryViewSet)
-#router_v1.register('genres', GenreViewSet)
-#router_v1.register('titles', TitleViewSet)
+router_v1.register('categories', CategoryViewSet)
+router_v1.register('genres', GenreViewSet)
+router_v1.register('titles', TitleViewSet)
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router_v1.register(

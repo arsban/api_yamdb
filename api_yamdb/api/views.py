@@ -1,26 +1,37 @@
-from Yamdb.models import User, Title, Comment, Review
-from django.core.mail import send_mail
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import status, views, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, views, viewsets, mixins
+from rest_framework.filters import SearchFilter
+
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from Yamdb.models import User
 
-from .permissions import IsAdmin, IsOwnerAdminModeratorOrReadOnly
+from yamdb.models import User, Category, Genre, Title, Review, Comment
+
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsOwnerAdminModeratorOrReadOnly
 from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
-                          UserSerializer, ReviewSerializer, CommentSerializer)
+                          UserSerializer, CategorySerializer, GenreSerializer,
+                          TitleSerializer, TitleWriteSerializer, ReviewSerializer, CommentSerializer)
+
+
+class ListCreateDestroyViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
-    http_method_names = ['get', 'post',
-                         'patch', 'delete']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     search_fields = ['username']
     lookup_field = 'username'
 
@@ -97,7 +108,6 @@ class AccessTokenView(views.APIView):
             'token': str(AccessToken.for_user(user))
         }
 
-
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
@@ -158,3 +168,34 @@ class CommentViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    lookup_field = 'slug'
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = (SearchFilter,)
+    search_fields = ('name',)
+
+
+class GenreViewSet(ListCreateDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    lookup_field = 'slug'
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = (SearchFilter,)
+    search_fields = ('name',)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('category', 'genre', 'name', 'year')
+
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleSerializer
+        return TitleWriteSerializer

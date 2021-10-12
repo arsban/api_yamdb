@@ -27,8 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'api',
-    'Yamdb'
+    'yamdb'
 ]
 
 MIDDLEWARE = [
@@ -42,7 +43,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'api_yamdb.urls'
-AUTH_USER_MODEL = 'Yamdb.User'
+AUTH_USER_MODEL = 'yamdb.User'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
@@ -92,7 +93,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Set default user model
-AUTH_USER_MODEL = 'Yamdb.User'
+AUTH_USER_MODEL = 'yamdb.User'
 
 
 # Internationalization
