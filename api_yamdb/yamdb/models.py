@@ -35,7 +35,7 @@ class User(AbstractUser):
         'Статус',
         max_length=16,
         choices=CHOICES,
-        default=CHOICES[0],
+        default=USER,
     )
 
     confirmation_code = models.CharField(
@@ -66,7 +66,7 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return f'{self.email}'
+        return self.email
 
 
 class Category(models.Model):
@@ -99,7 +99,7 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
-    year = models.PositiveSmallIntegerField(max_length=4)
+    year = models.PositiveSmallIntegerField()
     description = models.TextField(verbose_name='Описание произведения')
     genre = models.ManyToManyField(Genre, blank=True,
                                    related_name='genre',

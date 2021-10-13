@@ -1,18 +1,22 @@
-import re
 import datetime as dt
+
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
 from rest_framework.exceptions import ValidationError
-from yamdb.models import User, Review, Comment, Category, Title, Genre
 from django.db.models import Avg
+from rest_framework.relations import SlugRelatedField
+from yamdb.models import Category, Comment, Genre, Review, Title, User
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['email', 'username', 'bio', 'role']
+        fields = [
+            'email', 'username', 'bio',
+            'role', 'first_name', 'last_name',
+        ]
         model = User
         extra_kwargs = {
+            'email': {'required': True},
             'username': {'required': True},
-            'email': {'required': True}
         }
 
 
@@ -21,7 +25,8 @@ class EmailSerializer(serializers.ModelSerializer):
         fields = ['username', 'email']
         model = User
         extra_kwargs = {
-            'email': {'required': True}
+            'email': {'required': True},
+            'username': {'required': True},
         }
 
 
@@ -34,33 +39,40 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
+        fields = ('id', 'author', 'text', 'score', 'pub_date',)
         model = Review
-        fields = ('id', 'author', 'text', 'score', 'pub_date')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
+        fields = ('id', 'text', 'author', 'pub_date',)
         model = Comment
-        fields = ('id', 'text', 'author', 'pub_date')
+
 
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
+        fields = ('name', 'slug',)
         model = Category
-        fields = ('name', 'slug')
         extra_kwargs = {
-            'name': {'required': False}
+          
+            'name': {'required': False},
+          
         }
+
+
 
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
+        fields = ('name', 'slug',)
         model = Genre
-        fields = ('name', 'slug')
         extra_kwargs = {
-            'name': {'required': False}
+
+            'name': {'required': False},
+
         }
 
 
@@ -84,7 +96,7 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
 
     def validate_year(self, value):
         year = dt.date.today().year
