@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'api',
-    'yamdb',
+    'reviews',
 ]
 
 MIDDLEWARE = [
@@ -43,7 +43,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'api_yamdb.urls'
-AUTH_USER_MODEL = 'yamdb.User'
+AUTH_USER_MODEL = 'reviews.User'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
@@ -93,7 +93,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Set default user model
-AUTH_USER_MODEL = 'yamdb.User'
+AUTH_USER_MODEL = 'reviews.User'
 
 
 # Internationalization
