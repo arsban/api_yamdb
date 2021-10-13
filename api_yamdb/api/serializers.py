@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.exceptions import ValidationError
 from yamdb.models import User, Review, Comment, Category, Title, Genre
-
+from django.db.models import Avg
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,16 +51,8 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('name', 'slug')
         extra_kwargs = {
-            'name': {'required': False},
-            'slug': {'validators': []},
+            'name': {'required': False}
         }
-
-    def validate_slug(self, slug):
-        if len(slug) > 50:
-            return ValidationError("Slug должен быть не больше 50 символов")
-        if re.match(r'^[-a-zA-Z0-9_]+$', slug):
-            return ValidationError("Неверный формат Slug")
-
 
 class GenreSerializer(serializers.ModelSerializer):
 
@@ -68,18 +60,18 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
         fields = ('name', 'slug')
         extra_kwargs = {
-            'name': {'required': False},
-            'slug': {'validators': []},
+            'name': {'required': False}
         }
 
 
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer(many=False)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category', 'rating')
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
