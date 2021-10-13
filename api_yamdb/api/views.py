@@ -132,6 +132,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerAdminModeratorOrReadOnly]
     queryset = Review.objects.all()
 
+    def get_queryset(self):
+        return get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id')
+        ).reviews.all()
+
     def create(self, request, *args, **kwargs):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         serializer = ReviewSerializer(data=request.data)
