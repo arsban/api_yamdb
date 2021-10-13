@@ -4,7 +4,6 @@ from django.contrib.auth.admin import UserAdmin as CustomUserAdmin
 from .models import Category, Comment, Genre, Review, Title, TitleGenre, User
 
 
-#@admin.register(User)
 class UserAdmin(CustomUserAdmin):
     fieldsets = tuple(
         (fieldset[0], {

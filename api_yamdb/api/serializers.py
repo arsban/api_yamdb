@@ -2,7 +2,6 @@ import datetime as dt
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from django.db.models import Avg
 from rest_framework.relations import SlugRelatedField
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
@@ -57,11 +56,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name', 'slug',)
         model = Category
         extra_kwargs = {
-          
             'name': {'required': False},
-          
         }
-
 
 
 class GenreSerializer(serializers.ModelSerializer):

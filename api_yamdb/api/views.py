@@ -161,7 +161,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-          
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
