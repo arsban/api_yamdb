@@ -4,7 +4,11 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+
+from django.db.models import Avg
+
 from rest_framework import mixins, status, views, viewsets
+
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -125,14 +129,11 @@ class AccessTokenView(views.APIView):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
-
-    def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        return Review.objects.filter(title=title)
+    permission_classes = [IsOwnerAdminModeratorOrReadOnly]
+    queryset = Review.objects.all()
 
     def create(self, request, *args, **kwargs):
-        title = get_object_or_404(Title, id=self.kwargs['title_id'])
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         serializer = ReviewSerializer(data=request.data)
         if Review.objects.filter(
             author=self.request.user,
@@ -144,20 +145,17 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def partial_update(self, request, *args, **kwargs):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+
+        review = get_object_or_404(Review, id=self.kwargs.get('pk'),
+                                   title__id=self.kwargs.get('title_id'))
+
         if self.request.user != review.author:
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReviewSerializer(review, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        if self.request.user == instance.author:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
+          
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -168,7 +166,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Comment.objects.filter(review=review)
 
     def create(self, request, *args, **kwargs):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=self.request.user, review_id=review.id)
