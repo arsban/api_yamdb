@@ -31,7 +31,7 @@
 git clone https://github.com/arsban/api_yamdb.git
 ```
 ```
-cd api_final_yatube
+cd api_yamdb
 ```
 Cоздать и активировать виртуальное окружение:
 ```
