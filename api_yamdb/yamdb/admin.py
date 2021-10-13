@@ -39,14 +39,14 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
@@ -54,13 +54,13 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = ('name', 'year', 'description', 'get_genres',
-                    'category')
-    search_fields = ('name', 'description')
-    list_filter = ('year', 'genre', 'category')
+                    'category',)
+    search_fields = ('name', 'description',)
+    list_filter = ('year', 'genre', 'category',)
 
 
 @admin.register(TitleGenre)
 class TitleGenreAdmin(admin.ModelAdmin):
-    list_display = ('genre', 'title')
+    list_display = ('genre', 'title',)
     search_fields = ('title',)
     list_filter = ('genre',)

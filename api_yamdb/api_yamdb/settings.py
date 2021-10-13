@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'api',
-    'yamdb'
+    'yamdb',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +131,6 @@ REST_FRAMEWORK = {
         'user': '1000/day'
     }
 }
-
 
 
 SIMPLE_JWT = {
