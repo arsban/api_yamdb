@@ -57,7 +57,7 @@ python3 manage.py runserver
 ```
 
 ## Алгоритм регистрации пользователей
-1. Пользователь отправляет POST-запрос с параметрами email и username на ```/api/v1/auth/email/```
+1. Пользователь отправляет POST-запрос с параметрами email и username на ```/api/v1/auth/signup/```
 2. YaMDB отправляет письмо с кодом подтверждения на адрес email.
 3. Пользователь отправляет POST-запрос с параметрами email и confirmation_code на ```/api/v1/auth/token/```, в ответе на запрос ему приходит token (JWT-токен).
 
