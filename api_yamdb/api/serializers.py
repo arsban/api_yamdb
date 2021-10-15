@@ -28,6 +28,11 @@ class EmailSerializer(serializers.ModelSerializer):
             'username': {'required': True},
         }
 
+    def validate_username(self, username):
+        if username == 'me':
+            raise ValidationError(f'Никнеим: {username} недоступен')
+        return username
+
 
 class ConfirmationCodeSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -97,6 +102,6 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         year = dt.date.today().year
-        if not (1888 < value <= year):
+        if value > year:
             raise ValidationError('Указан некорректный год!')
         return value

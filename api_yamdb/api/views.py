@@ -46,23 +46,16 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         if request.method == 'GET':
             serializer = self.get_serializer(request.user)
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(data=serializer.data)
         if request.method == 'PATCH':
             serializer = self.get_serializer(
                 request.user,
                 data=request.data,
                 partial=True
             )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(role=request.user.role)
-                return Response(
-                    data=serializer.data,
-                    status=status.HTTP_200_OK
-                )
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(role=request.user.role)
+            return Response(data=serializer.data)
 
 
 class EmailRegistrationView(views.APIView):
@@ -84,15 +77,10 @@ class EmailRegistrationView(views.APIView):
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data['email']
             username = serializer.validated_data['username']
-            if username == 'me':
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             serializer.save(username=username)
             user = get_object_or_404(User, username=username)
             self.mail_send(email, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
