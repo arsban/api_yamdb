@@ -1,8 +1,10 @@
 import datetime as dt
 
-from rest_framework import serializers
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import SlugRelatedField
+from rest_framework.response import Response
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
@@ -28,6 +30,11 @@ class EmailSerializer(serializers.ModelSerializer):
             'username': {'required': True},
         }
 
+    def validate_username(self, username):
+        if username == 'me':
+            raise ValidationError(f'Никнеим: {username} недоступен')
+        return username
+
 
 class ConfirmationCodeSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -42,6 +49,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def only_one_review(self, request, *args, **kwargs):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         if Review.objects.filter(
             author=self.request.user,
             title=title
@@ -73,9 +81,7 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug',)
         model = Genre
         extra_kwargs = {
-
             'name': {'required': False},
-
         }
 
 
@@ -104,6 +110,6 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         year = dt.date.today().year
-        if not (1888 < value <= year):
+        if value > year:
             raise ValidationError('Указан некорректный год!')
         return value
