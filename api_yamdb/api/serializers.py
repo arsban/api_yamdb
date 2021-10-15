@@ -41,6 +41,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'text', 'score', 'pub_date',)
         model = Review
 
+    def only_one_review(self, request, *args, **kwargs):
+        if Review.objects.filter(
+            author=self.request.user,
+            title=title
+        ).exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)

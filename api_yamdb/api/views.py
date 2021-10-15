@@ -151,10 +151,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def partial_update(self, request, *args, **kwargs):
-
         review = get_object_or_404(Review, id=self.kwargs.get('pk'),
                                    title__id=self.kwargs.get('title_id'))
-
         if self.request.user != review.author:
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReviewSerializer(review, data=request.data, partial=True)
