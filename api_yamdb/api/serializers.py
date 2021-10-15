@@ -1,8 +1,10 @@
 import datetime as dt
 
-from rest_framework import serializers
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import SlugRelatedField
+from rest_framework.response import Response
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
@@ -47,6 +49,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def only_one_review(self, request, *args, **kwargs):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         if Review.objects.filter(
             author=self.request.user,
             title=title
@@ -78,9 +81,7 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug',)
         model = Genre
         extra_kwargs = {
-
             'name': {'required': False},
-
         }
 
 
