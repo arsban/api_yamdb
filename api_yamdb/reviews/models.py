@@ -138,15 +138,15 @@ class Review(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE,
                               related_name='reviews')
     text = models.TextField(verbose_name='Текст отзыва')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор отзыва')
+    pub_date = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата отзыва')
     score = models.IntegerField(
         null=True,
         blank=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(10)
-        ])
+        ], verbose_name='Оценка произведения')
 
     class Meta:
         ordering = ('-pub_date', 'score')
@@ -167,8 +167,8 @@ class Comment(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE,
                                related_name='comments')
     text = models.TextField(verbose_name='Текст комментария')
-    pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    pub_date = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата комментария')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария')
 
     class Meta:
         ordering = ('-pub_date',)
