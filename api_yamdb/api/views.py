@@ -125,24 +125,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         serializer = ReviewSerializer(data=request.data)
-        if Review.objects.filter(
-            author=self.request.user,
-            title=title
-        ).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=self.request.user, title_id=title.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def partial_update(self, request, *args, **kwargs):
-        review = get_object_or_404(Review, id=self.kwargs.get('pk'),
-                                   title__id=self.kwargs.get('title_id'))
-        if self.request.user != review.author:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer = ReviewSerializer(review, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -159,17 +145,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=self.request.user, review_id=review.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def partial_update(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, id=self.kwargs.get('pk'),
-                                    review__id=self.kwargs.get('review_id'))
-        if self.request.user != comment.author:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer = CommentSerializer(comment, data=request.data,
-                                       partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):

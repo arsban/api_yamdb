@@ -48,14 +48,20 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'text', 'score', 'pub_date',)
         model = Review
 
-    def only_one_review(self, request, *args, **kwargs):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+    def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
+        request = self.context.get('request')
+        title = get_object_or_404(
+            Title,
+            id=self.context['request'].parser_context['kwargs']['title_id']
+        )
         if Review.objects.filter(
-            author=self.request.user,
+            author=self.context['request'].user,
             title=title
         ).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+            raise ValidationError('Отзыв уже написан')
+        return data
 
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
