@@ -1,10 +1,10 @@
 import datetime as dt
 
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import SlugRelatedField
-from rest_framework.response import Response
+
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
@@ -51,7 +51,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if self.context['request'].method != 'POST':
             return data
-        request = self.context.get('request')
         title = get_object_or_404(
             Title,
             id=self.context['request'].parser_context['kwargs']['title_id']
@@ -62,6 +61,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         ).exists():
             raise ValidationError('Отзыв уже написан')
         return data
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
