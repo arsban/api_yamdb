@@ -122,13 +122,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
             id=self.kwargs.get('title_id')
         ).reviews.all()
 
-    def create(self, request, *args, **kwargs):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer = ReviewSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=self.request.user, title_id=title.id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
