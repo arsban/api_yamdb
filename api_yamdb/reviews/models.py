@@ -1,4 +1,5 @@
 import uuid
+import datetime as dt
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -95,7 +96,9 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
-    year = models.PositiveSmallIntegerField()
+    year = models.IntegerField(null=True, blank=True, validators=[
+        MaxValueValidator(dt.date.today().year)
+    ], verbose_name='год создания произведения')
     description = models.TextField(verbose_name='Описание произведения')
     genre = models.ManyToManyField(Genre, blank=True,
                                    related_name='genre',
